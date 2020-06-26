@@ -10,9 +10,29 @@ body {
   height: 50px;
 }
 
+.row {
+  overflow: hidden;
+}
+
+#map {
+  position: relative;
+  /* overflow: hidden; */
+  width: 100%;
+  height: 100%;
+}
+
+.chart-data {
+  width: 38%;
+  margin-left: 30px;
+  margin-top: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid rgb(102, 105, 114);
+}
+
 .map-info {
   background-color: bisque;
-  height: 700;
+  height: 700px;
 }
 
 .data-info {
@@ -32,21 +52,6 @@ body {
   overflow-y: scroll;
 }
 
-#map {
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  height: 100vh;
-}
-
-.chart-data {
-  width: 38%;
-  margin-left: 30px;
-  margin-top: 20px;
-  border-radius: 10px;
-  overflow: hidden;
-  border: 2px solid rgb(102, 105, 114);
-}
 
 .info-flag img {
   width: 100px;
@@ -78,8 +83,10 @@ body {
   margin-top: 5px;
 }
 
-#myChart {
-  margin-top: 85px;
+#myChart, #pieChart {
+  /* margin-top: 85px; */
   background-color: rgb(236, 255, 252);
-  margin: 0 auto;
+  margin: 15px auto;
+  border-radius: 10px;
+  z-index: 5;
 }
