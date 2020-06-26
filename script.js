@@ -1,5 +1,6 @@
 window.onload = () => {
   getCountryData();
+  getGlobalData();
   getHistoricalData();
 };
 
@@ -20,9 +21,8 @@ const getCountryData = () => {
       return response.json();
     })
     .then((data) => {
-      // console.log(data);
       showDataOnMap(data);
-      showDataInTable(data);
+      // showDataInTable(data);
     });
 };
 
@@ -32,10 +32,18 @@ const getHistoricalData = () => {
       return response.json();
     })
     .then((data) => {
-      console.log(data);
       let chartData = buildChartData(data);
-      console.log(chartData);
       buildChart(chartData);
+    });
+};
+
+const getGlobalData = () => {
+  fetch("https://corona.lmao.ninja/v2/all")
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      buildPieChart(data);
     });
 };
 
@@ -68,6 +76,7 @@ const buildChartData = (data) => {
     };
     deathsData.push(newDataPoint);
   }
+
   allData.push(chartData, recoveredData, deathsData);
   return allData;
 };
@@ -139,14 +148,13 @@ const showDataInTable = (data) => {
         <td>${country.deaths}</td>
       </tr>
     `;
-    document.getElementById("table-data").innerHTML = html;
+    // document.getElementById("table-data").innerHTML = html;
   });
 };
 
 const buildChart = (chartData) => {
-  console.log(chartData);
-  var ctx = document.querySelector("#myChart").getContext("2d");
   const timeFormat = "MM/DD/YY";
+  var ctx = document.querySelector("#myChart").getContext("2d");
 
   var chart = new Chart(ctx, {
     // The type of chart we want to create
@@ -179,7 +187,6 @@ const buildChart = (chartData) => {
         },
       ],
     },
-    //#1d2c4d
     // Configuration options go here
     options: {
       tooltips: {
@@ -213,3 +220,69 @@ const buildChart = (chartData) => {
     },
   });
 };
+
+const buildPieChart = (data) => {
+  // const timeFormat = "MM/DD/YY";
+  var ctx = document.querySelector("#pieChart").getContext("2d");
+
+  var pieChart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: "pie",
+    data: {
+      datasets: [
+        {
+          label: [
+            "Total Cases",
+            "Active Cases",
+            "Recovered Cases",
+            "Death Cases",
+          ],
+          data: [data.cases, data.active, data.recovered, data.deaths],
+          backgroundColor: [
+            "rgb(142,195,185)",
+            "rgb(2,62,88)",
+            "rgb(14,22,38)",
+            "rgb(14,22,38)",
+          ],
+          borderColor: [
+            "rgb(142,195,185)",
+            "rgb(2,62,88)",
+            "rgb(14,22,38)",
+            "rgb(14,22,38)",
+          ],
+        },
+      ],
+    },
+    // Configuration options go here
+    // options: {
+    //   tooltips: {
+    //     mode: "index",
+    //     intersect: false,
+    //   },
+    //   scales: {
+    //     xAxes: [
+    //       {
+    //         type: "time",
+    //         time: {
+    //           format: timeFormat,
+    //           tooltipFormat: "ll",
+    //         },
+    //         scaleLabel: {
+    //           display: true,
+    //           labelString: "Date",
+    //         },
+    //       },
+    //     ],
+    //     yAxes: [
+    //       {
+    //         ticks: {
+    //           callback: function (value, index, values) {
+    //             return numeral(value).format("0,0");
+    //           },
+    //         },
+    //       },
+    //     ],
+    //   },
+  });
+};
+
