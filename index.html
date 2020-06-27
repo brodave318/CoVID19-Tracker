@@ -13,7 +13,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
-  <script src="/map-style.js"></script>
+  <script src="map-style.js"></script>
   <script src="script.js"></script>
 </head>
 
@@ -38,34 +38,34 @@
         </div>
         <div class="row stats-container">
           <div class="col">
-            <div class="card" style="width: 18rem;">
+            <div class="card" onclick="clickEvent(0)" value="0" style="width: 18rem;">
               <div class="card-body">
                 <h5 class="card-title">Total Cases</h5>
-                <h6 class="card-subtitle mb-2 text-muted">1,436,886</h6>
+                <h6 class="card-subtitle mb-2 text-muted card-total"></h6>
               </div>
             </div>
           </div>
           <div class="col">
-            <div class="card" style="width: 18rem;">
+            <div class="card" value="1" style="width: 18rem;">
               <div class="card-body">
                 <h5 class="card-title">Active Cases</h5>
-                <h6 class="card-subtitle mb-2 text-muted">1,0496,886</h6>
+                <h6 class="card-subtitle mb-2 text-muted card-total"></h6>
               </div>
             </div>
           </div>
           <div class="col">
-            <div class="card" style="width: 18rem;">
+            <div class="card" value="2" style="width: 18rem;">
               <div class="card-body">
                 <h5 class="card-title">Recovered Cases</h5>
-                <h6 class="card-subtitle mb-2 text-muted">336,886</h6>
+                <h6 class="card-subtitle mb-2 text-muted card-total"></h6>
               </div>
             </div>
           </div>
           <div class="col">
-            <div class="card" style="width: 18rem;">
+            <div class="card" value="3" style="width: 18rem;">
               <div class="card-body">
                 <h5 class="card-title">Death Cases</h5>
-                <h6 class="card-subtitle mb-2 text-muted">82,886</h6>
+                <h6 class="card-subtitle mb-2 text-muted card-total"></h6>
               </div>
             </div>
           </div>
@@ -136,14 +136,14 @@
   <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA0nvko8NSWORUd-diMQFbi_ZN58tUEXeo&callback=initMap"></script>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-    crossorigin="anonymous"></script>
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-    crossorigin="anonymous"></script>
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+  </script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
-    integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
-    crossorigin="anonymous"></script>
+    integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous">
+  </script>
 </body>
 
 </html>

@@ -23,11 +23,12 @@
 }
 
 .chart-container .col {
-  background-color:#eff2f6;
+  background-color: #eff2f6;
   border-radius: 12px;
 }
 
-.linear-chart, .pie-chart {
+.linear-chart,
+.pie-chart {
   height: 100%
 }
 
@@ -49,3 +50,10 @@
 .stats-container .card-body {
   padding: 1rem;
 }
+
+/* 
+body {
+  color: rgb(142,195,185),
+          rgb(2,62,88),
+          rgb(47, 82, 156),
+          rgb(14,22,38)} */

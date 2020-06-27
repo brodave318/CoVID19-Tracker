@@ -6,11 +6,21 @@ window.onload = () => {
 
 var map;
 let infoWindow;
+
+// const cards = document.querySelectorAll('.card')
+// const colors = ['dogerblue', '']
+// cards.addEventListener('click', () => {
+
+// })
+
 function initMap() {
   map = new google.maps.Map(document.getElementById("map"), {
-    center: { lat: 37, lng: -96 },
+    center: {
+      lat: 37,
+      lng: -96
+    },
     zoom: 5,
-    styles: mapStyle,
+    styles: mapStyle
   });
   infoWindow = new google.maps.InfoWindow();
 }
@@ -44,8 +54,17 @@ const getGlobalData = () => {
     })
     .then((data) => {
       buildPieChart(data);
+      getCurrentTotals(data)
     });
 };
+
+const getCurrentTotals = (data) => {
+  const attributes = [data.cases, data.active, data.recovered, data.deaths]
+  const cardTotals = document.querySelectorAll('.card-total')
+  for (let i = 0; i < attributes.length; i++) {
+    cardTotals[i].innerText = attributes[i]
+  }
+}
 
 const buildChartData = (data) => {
   let chartData = [];
@@ -86,6 +105,7 @@ const openInfoWindow = () => {
 };
 
 const showDataOnMap = (data) => {
+  console.log(data)
   data.map((country) => {
     let countryCenter = {
       lat: country.countryInfo.lat,
@@ -93,7 +113,7 @@ const showDataOnMap = (data) => {
     };
 
     var countryCircle = new google.maps.Circle({
-      strokeColor: "#FF0000",
+      strokeColor: "#ff0000",
       strokeOpacity: 0.8,
       strokeWeight: 2,
       fillColor: "#FF0000",
@@ -104,22 +124,22 @@ const showDataOnMap = (data) => {
     });
 
     let html = `
-      <div class="info-container">
-        <div class="info-flag" style="background-image: url(${country.countryInfo.flag}">
+    <div class="info-container">
+    <div class="info-flag" style="background-image: url(${country.countryInfo.flag}">
         </div>
         <div class="info-name">
           ${country.country}
         </div>
         <div class="info-confirmed">
-          Total: ${country.cases}
+        Total: ${country.cases}
         </div>
         <div class="info-recovered">
           Recovered: ${country.recovered}
-        </div>
-        <div class="info-deaths">
+          </div>
+          <div class="info-deaths">
           Deaths: ${country.deaths}
-        </div>  
-      </div>
+          </div>  
+          </div>
     `;
 
     var infoWindow = new google.maps.InfoWindow({
@@ -141,13 +161,13 @@ const showDataInTable = (data) => {
   let html = "";
   data.forEach((country) => {
     html += `
-      <tr>
+    <tr>
         <td>${country.country}</td>
         <td>${country.cases}</td>
         <td>${country.recovered}</td>
         <td>${country.deaths}</td>
-      </tr>
-    `;
+        </tr>
+        `;
     // document.getElementById("table-data").innerHTML = html;
   });
 };
@@ -160,8 +180,7 @@ const buildChart = (chartData) => {
     // The type of chart we want to create
     type: "bar",
     data: {
-      datasets: [
-        {
+      datasets: [{
           label: ["Total Cases"],
           data: chartData[0],
           showLine: true,
@@ -194,28 +213,24 @@ const buildChart = (chartData) => {
         intersect: false,
       },
       scales: {
-        xAxes: [
-          {
-            type: "time",
-            time: {
-              format: timeFormat,
-              tooltipFormat: "ll",
-            },
-            scaleLabel: {
-              display: true,
-              labelString: "Date",
+        xAxes: [{
+          type: "time",
+          time: {
+            format: timeFormat,
+            tooltipFormat: "ll",
+          },
+          scaleLabel: {
+            display: true,
+            labelString: "Date",
+          },
+        }, ],
+        yAxes: [{
+          ticks: {
+            callback: function (value, index, values) {
+              return numeral(value).format("0,0");
             },
           },
-        ],
-        yAxes: [
-          {
-            ticks: {
-              callback: function (value, index, values) {
-                return numeral(value).format("0,0");
-              },
-            },
-          },
-        ],
+        }, ],
       },
     },
   });
@@ -229,29 +244,27 @@ const buildPieChart = (data) => {
     // The type of chart we want to create
     type: "pie",
     data: {
-      datasets: [
-        {
-          label: [
-            "Total Cases",
-            "Active Cases",
-            "Recovered Cases",
-            "Death Cases",
-          ],
-          data: [data.cases, data.active, data.recovered, data.deaths],
-          backgroundColor: [
-            "rgb(142,195,185)",
-            "rgb(2,62,88)",
-            "rgb(14,22,38)",
-            "rgb(14,22,38)",
-          ],
-          borderColor: [
-            "rgb(142,195,185)",
-            "rgb(2,62,88)",
-            "rgb(14,22,38)",
-            "rgb(14,22,38)",
-          ],
-        },
-      ],
+      datasets: [{
+        label: [
+          "Total Cases",
+          "Active Cases",
+          "Recovered Cases",
+          "Death Cases",
+        ],
+        data: [data.cases, data.active, data.recovered, data.deaths],
+        backgroundColor: [
+          "rgb(142,195,185)",
+          "rgb(2,62,88)",
+          "rgb(47, 82, 156)",
+          "rgb(14,22,38)",
+        ],
+        borderColor: [
+          "rgb(142,195,185)",
+          "rgb(2,62,88)",
+          "rgb(47, 82, 156)",
+          "rgb(14,22,38)",
+        ],
+      }, ],
     },
     // Configuration options go here
     // options: {
@@ -286,3 +299,8 @@ const buildPieChart = (data) => {
   });
 };
 
+const colors = ['rgb(142,195,185)', "rgb(2,62,88)", "rgb(47, 82, 156)", "rgb(14,22,38)"]
+const clickEvent = (n) => {
+  const cards = document.querySelectorAll('.card')
+  cards[n].style.backgroundColor = colors[n]
+}
