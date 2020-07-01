@@ -6,24 +6,37 @@ window.onload = () => {
 
 var map;
 let infoWindow;
-
-// const cards = document.querySelectorAll('.card')
-// const colors = ['dogerblue', '']
-// cards.addEventListener('click', () => {
-
-// })
+let coronaGlobalData;
+let mapCircles = [];
+let casesTypeColors = {
+  cases: "dodgerblue",
+  active: "orangered",
+  recovered: "green",
+  deaths: "rgb(14,22,38)",
+};
 
 function initMap() {
   map = new google.maps.Map(document.getElementById("map"), {
     center: {
       lat: 37,
-      lng: -96
+      lng: -96,
     },
-    zoom: 5,
-    styles: mapStyle
+    zoom: 3,
+    styles: mapStyle,
   });
   infoWindow = new google.maps.InfoWindow();
 }
+
+const changeDataSelection = (casesType) => {
+  clearTheMap();
+  showDataOnMap(coronaGlobalData, casesType);
+};
+
+const clearTheMap = () => {
+  for (let circle of mapCircles) {
+    circle.setMap(null);
+  }
+};
 
 const getCountryData = () => {
   fetch("https://corona.lmao.ninja/v2/countries")
@@ -31,8 +44,9 @@ const getCountryData = () => {
       return response.json();
     })
     .then((data) => {
+      coronaGlobalData = data;
       showDataOnMap(data);
-      // showDataInTable(data);
+      showDataInTable(data);
     });
 };
 
@@ -48,64 +62,30 @@ const getHistoricalData = () => {
 };
 
 const getGlobalData = () => {
-  fetch("https://corona.lmao.ninja/v2/all")
+  fetch("https://disease.sh/v2/all")
     .then((response) => {
       return response.json();
     })
     .then((data) => {
       buildPieChart(data);
-      getCurrentTotals(data)
+      getCurrentTotals(data);
     });
 };
 
+// insert current total cases on cards html
 const getCurrentTotals = (data) => {
-  const attributes = [data.cases, data.active, data.recovered, data.deaths]
-  const cardTotals = document.querySelectorAll('.card-total')
-  for (let i = 0; i < attributes.length; i++) {
-    cardTotals[i].innerText = attributes[i]
+  const totalsData = [data.cases, data.active, data.recovered, data.deaths];
+  const cardTotals = document.querySelectorAll(".card-total");
+  for (let i = 0; i < totalsData.length; i++) {
+    cardTotals[i].innerText = totalsData[i];
   }
-}
-
-const buildChartData = (data) => {
-  let chartData = [];
-  let recoveredData = [];
-  let deathsData = [];
-  let allData = [];
-
-  for (let date in data.cases) {
-    let newDataPoint = {
-      x: date,
-      y: data.cases[date],
-    };
-    chartData.push(newDataPoint);
-  }
-
-  for (let date in data.recovered) {
-    let newDataPoint = {
-      x: date,
-      y: data.recovered[date],
-    };
-    recoveredData.push(newDataPoint);
-  }
-
-  for (let date in data.deaths) {
-    let newDataPoint = {
-      x: date,
-      y: data.deaths[date],
-    };
-    deathsData.push(newDataPoint);
-  }
-
-  allData.push(chartData, recoveredData, deathsData);
-  return allData;
 };
 
 const openInfoWindow = () => {
   infoWindow.open(mao);
 };
 
-const showDataOnMap = (data) => {
-  console.log(data)
+const showDataOnMap = (data, casesType = "cases") => {
   data.map((country) => {
     let countryCenter = {
       lat: country.countryInfo.lat,
@@ -113,15 +93,17 @@ const showDataOnMap = (data) => {
     };
 
     var countryCircle = new google.maps.Circle({
-      strokeColor: "#ff0000",
+      strokeColor: casesTypeColors[casesType],
       strokeOpacity: 0.8,
       strokeWeight: 2,
-      fillColor: "#FF0000",
+      fillColor: casesTypeColors[casesType],
       fillOpacity: 0.35,
       map: map,
       center: countryCenter,
-      radius: Math.sqrt(country.cases) * 250,
+      radius: country[casesType],
     });
+
+    mapCircles.push(countryCircle);
 
     let html = `
     <div class="info-container">
@@ -168,139 +150,6 @@ const showDataInTable = (data) => {
         <td>${country.deaths}</td>
         </tr>
         `;
-    // document.getElementById("table-data").innerHTML = html;
+    document.getElementById("table-data").innerHTML = html;
   });
 };
-
-const buildChart = (chartData) => {
-  const timeFormat = "MM/DD/YY";
-  var ctx = document.querySelector("#myChart").getContext("2d");
-
-  var chart = new Chart(ctx, {
-    // The type of chart we want to create
-    type: "bar",
-    data: {
-      datasets: [{
-          label: ["Total Cases"],
-          data: chartData[0],
-          showLine: true,
-          fill: false,
-          backgroundColor: "rgb(142,195,185)",
-          borderColor: "rgb(142,195,185)",
-        },
-        {
-          label: ["Total Recovered"],
-          data: chartData[1],
-          showLine: true,
-          fill: false,
-          backgroundColor: "rgb(2,62,88)",
-          borderColor: "rgb(2,62,88)",
-        },
-        {
-          label: ["Total Deaths"],
-          data: chartData[2],
-          showLine: true,
-          fill: false,
-          backgroundColor: "rgb(14,22,38)",
-          borderColor: "rgb(14,22,38)",
-        },
-      ],
-    },
-    // Configuration options go here
-    options: {
-      tooltips: {
-        mode: "index",
-        intersect: false,
-      },
-      scales: {
-        xAxes: [{
-          type: "time",
-          time: {
-            format: timeFormat,
-            tooltipFormat: "ll",
-          },
-          scaleLabel: {
-            display: true,
-            labelString: "Date",
-          },
-        }, ],
-        yAxes: [{
-          ticks: {
-            callback: function (value, index, values) {
-              return numeral(value).format("0,0");
-            },
-          },
-        }, ],
-      },
-    },
-  });
-};
-
-const buildPieChart = (data) => {
-  // const timeFormat = "MM/DD/YY";
-  var ctx = document.querySelector("#pieChart").getContext("2d");
-
-  var pieChart = new Chart(ctx, {
-    // The type of chart we want to create
-    type: "pie",
-    data: {
-      datasets: [{
-        label: [
-          "Total Cases",
-          "Active Cases",
-          "Recovered Cases",
-          "Death Cases",
-        ],
-        data: [data.cases, data.active, data.recovered, data.deaths],
-        backgroundColor: [
-          "rgb(142,195,185)",
-          "rgb(2,62,88)",
-          "rgb(47, 82, 156)",
-          "rgb(14,22,38)",
-        ],
-        borderColor: [
-          "rgb(142,195,185)",
-          "rgb(2,62,88)",
-          "rgb(47, 82, 156)",
-          "rgb(14,22,38)",
-        ],
-      }, ],
-    },
-    // Configuration options go here
-    // options: {
-    //   tooltips: {
-    //     mode: "index",
-    //     intersect: false,
-    //   },
-    //   scales: {
-    //     xAxes: [
-    //       {
-    //         type: "time",
-    //         time: {
-    //           format: timeFormat,
-    //           tooltipFormat: "ll",
-    //         },
-    //         scaleLabel: {
-    //           display: true,
-    //           labelString: "Date",
-    //         },
-    //       },
-    //     ],
-    //     yAxes: [
-    //       {
-    //         ticks: {
-    //           callback: function (value, index, values) {
-    //             return numeral(value).format("0,0");
-    //           },
-    //         },
-    //       },
-    //     ],
-    //   },
-  });
-};
-
-const colors = ['rgb(142,195,185)', "rgb(2,62,88)", "rgb(47, 82, 156)", "rgb(14,22,38)"]
-const clickEvent = (n) => {
-  const cards = document.querySelectorAll('.card')
-  cards[n].style.backgroundColor = colors[n]
-}
